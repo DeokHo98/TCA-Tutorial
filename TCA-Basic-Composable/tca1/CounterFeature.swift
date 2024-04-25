@@ -47,6 +47,9 @@ struct CounterFeature {
         case timer
     }
 
+
+    @Dependency(\.사실) var 사실
+
     //여기서 사용자 액션에 따라 상태를 현재값에서 다음값으로 진화시키고 외부와의 상호작용을 해야한다.
     //이는 들어오는 액션을 기반으로 어떤로직을 수행해야하는지를 결정하기위해 Switch 문을 사용하며 상태는 inout으로 제공되며 직접 변경할 수 있다.
     var body: some ReducerOf<Self> {
@@ -66,10 +69,7 @@ struct CounterFeature {
                 //비동기적인 흐름의 코드를 작성할때는 .run을 이용해야함.
                 return .run { [state] send in
                     do {
-                        let (데이터, _) = try await URLSession.shared
-                            .data(from: URL(string: "http://numbersapi.com/\(state.카운트)")!)
-                        let 사실 = String(decoding: 데이터, as: UTF8.self)
-                        await send(.사실응답(사실))
+                        try await send(.사실응답(self.사실.fetch(state.카운트)))
                     } catch let 에러 {
                         await send(.에러응답(에러.localizedDescription))
                     }
@@ -85,8 +85,9 @@ struct CounterFeature {
                         await send(.타이머틱)
                     }
                 }
-                //이벤트를 취소 가능하게 만든다 쉽게말해
-                //.cancel로 취소한 식별자랑 같다면 여기 run 작업이 취소되는것이다.                .cancellable(id: CancelID.timer)
+                .cancellable(id: CancelID.timer)
+                // cancellable은 쉽게말해 이벤트를 취소 가능하게 만든다 
+                //.cancel로 취소한 식별자랑 같다면 여기 run 작업이 취소되는것이다.
             case .사실응답(let 사실):
                 state.사실 = 사실
                 state.로딩중 = false
