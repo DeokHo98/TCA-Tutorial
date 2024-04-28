@@ -25,11 +25,16 @@ struct Feature {
         Reduce { state, action in
             switch action {
             case .moveChildButtonTap:
-                return .none
-            case .childAction:
-                return .none
+                state.childState = ChildFeature.State()
+            case .childAction(let childAction):
+                if case .presented(.delegate(.saveText(let text))) = childAction {
+                    state.text = text
+                }
             }
             return .none
+        }
+        .ifLet(\.$childState, action: \.childAction) {
+            ChildFeature()
         }
     }
 }

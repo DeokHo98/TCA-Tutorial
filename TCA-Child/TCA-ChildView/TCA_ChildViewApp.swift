@@ -12,8 +12,9 @@ import ComposableArchitecture
 struct TCA_ChildViewApp: App {
     var body: some Scene {
         WindowGroup {
-
-            ContentView()
+            ContentView(store: .init(initialState: Feature.State(), reducer: {
+                Feature()
+            }))
         }
     }
 }
