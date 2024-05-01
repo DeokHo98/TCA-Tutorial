@@ -18,17 +18,17 @@ struct AddView: View {
                 .frame(width: 200)
                 .textFieldStyle(.roundedBorder)
             HStack(spacing: 0) {
-                Button("확인") {
-                    store.send(.okButtonTap)
-                }
-                .font(.headline)
-                .frame(width: 100)
-
                 Button("취소") {
                     store.send(.cancelButtonTap)
                 }
                 .font(.headline)
                 .foregroundStyle(.red)
+                .frame(width: 100)
+
+                Button("확인") {
+                    store.send(.okButtonTap)
+                }
+                .font(.headline)
                 .frame(width: 100)
             }
             .frame(width: 200)
